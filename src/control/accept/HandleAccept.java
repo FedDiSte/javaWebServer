@@ -1,5 +1,6 @@
 package control.accept;
 
+import control.handle.ClosedServer;
 import control.memory.Shared;
 
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class HandleAccept implements Runnable{
                 if(shared.isAccepting()) {
                     
                 } else {
-                    new Thread()
+                    new Thread(new ClosedServer(serverSocket.accept())).start();
                 }
             } while(!shared.isGeneralShutdown());
             serverSocket.close();

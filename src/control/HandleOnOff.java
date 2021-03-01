@@ -63,17 +63,20 @@ public class HandleOnOff implements Runnable{
                     case "stop": {
                         normalLog("Chiusura server, il programma terminerà a breve");
                         generalShutdown = true;
+                        break;
                     }
                     case "help": {
                         normalLog("Per mandare online/offline il server: online/offline \n" +
                                 "Per spegnere il server: stop \n" +
                                 "Per stampare informazioni su i comandi: help");
+                        break;
                     }
                     default: {
                         log("Comando non trovato\n");
                         normalLog("Per mandare online/offline il server: online/offline \n" +
                                 "Per spegnere il server: stop \n" +
                                 "Per stampare informazioni su i comandi: help");
+                        break;
                     }
                 }
             } while(!generalShutdown);

@@ -4,7 +4,7 @@ public class Shared {
 
     private boolean accepting;
     private boolean generalShutdown;
-    private static final int listeningPort = 80;
+    private static final int listeningPort = 6969;
 
     public void Shared() {
         accepting = false;
