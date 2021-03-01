@@ -1,3 +1,26 @@
-h1{
-    text-align: center; 
+body {
+    font-family: 'Montserrat';
+    background-color: #EF233C;
+    align-content: center;
+}
+
+.card {
+    text-align: center;
+    background-color: #FAFAFA;
+    border-radius: 25px;
+    padding: 2rem;
+    margin-top: 20%;
+    margin-left: 20%;
+    margin-right: 20%;
+    box-shadow: rgba(0,0,0,0.14902) 0px 2px 2px 0px,rgba(0,0,0,0.09804) 0px 2px 4px 0px;
+}
+
+.line{
+    border-top: 2px solid #2B2D42;
+    border-radius: 5px; 
+    position: relative; 
+}
+
+h1 {
+    font-weight: bolder;
 }

@@ -15,6 +15,8 @@ public class ClosedServer implements Runnable {
 
     private Socket socket;
 
+    BufferedReader inNet;
+
     private PrintWriter outNet;
     private String percorso = "src/res/403.html";
     private Path pathFile = Paths.get(percorso);
@@ -25,26 +27,29 @@ public class ClosedServer implements Runnable {
     String pathImg = "src/res/images/img.png";
     Path percorsoImg = Paths.get(pathImg);
 
+
     public ClosedServer(Socket socket) {
-        this.socket = socket;
+        try {
+            this.socket = socket;
+            inNet = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            outNet = new PrintWriter(socket.getOutputStream(), true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void run() {
         try {
-            BufferedReader inNet = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            outNet = new PrintWriter(socket.getOutputStream(), true);
-            String request = "";
-            while (request != null || request.isEmpty() || request.isBlank()) {
-                Scanner s = new Scanner(request = inNet.readLine());
-                s.useDelimiter(" ");
-                log(request);
-                s.next(); //GET
-                String check = s.next();
-                if (check.contains(".css")) {
-                    sendCss();
-                } else if (check.contains(".png") || check.contains(".jpg")) {
+            String request;
+            while ((request = getRequest()) != null) {
+                Scanner s = new Scanner(request);
+                s.next(); //Skip "GET"
+                String readed = s.next();
+                if(readed.contains(".png") || readed.contains(".jpg")) {
                     sendImg();
+                } else if(readed.contains(".css")) {
+                    sendCss();
                 } else {
                     sendHtml();
                 }
@@ -82,23 +87,26 @@ public class ClosedServer implements Runnable {
 
     }
 
-    public void sendImg() throws IOException {
+    public void sendImg() {
+        try {
+            BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
+            BufferedInputStream in = new BufferedInputStream(new FileInputStream(percorsoImg.toFile()));
 
-        BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
-        BufferedInputStream in = new BufferedInputStream(new FileInputStream(percorsoImg.toFile()));
+            send("HTTP/1.1 200 OK");
+            send("Content-Type: image/png");
+            send("Content-Length: " + percorsoImg.toFile().length());
+            send("\r\n");
 
-        send("HTTP/1.1 200 OK");
-        send("Content-Type: image/png");
-        send("Content-Length: " + percorsoImg.toFile().length());
-        send("\r\n");
-
-        byte[] buffer = new byte[4096];
-        int bytesRead;
-        while ((bytesRead = in.read(buffer)) != -1) {
-            out.write(buffer, 0, bytesRead);
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = in.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
+            }
+            out.flush();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        out.flush();
-        out.close();
     }
 
     private void log(String message) {
@@ -109,4 +117,19 @@ public class ClosedServer implements Runnable {
         outNet.println(message);
         outNet.flush();
     }
+
+    private String getRequest() throws IOException{
+        StringBuilder sb = new StringBuilder();
+        String message;
+        for(int i = 0; i < 3; i++) {
+            if((message = inNet.readLine()) != null) {
+                sb.append(message);
+            }
+        }
+        if(sb.length() > 0) {
+            return sb.toString();
+        }
+        return null;
+    }
+
 }
