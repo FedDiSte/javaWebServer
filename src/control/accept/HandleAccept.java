@@ -25,7 +25,11 @@ public class HandleAccept implements Runnable{
     public void run() {
         try {
             do{
+                if(shared.isAccepting()) {
+                    
+                } else {
 
+                }
             } while(!shared.isGeneralShutdown());
             serverSocket.close();
         } catch (IOException e) {

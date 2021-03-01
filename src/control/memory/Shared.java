@@ -7,7 +7,8 @@ public class Shared {
     private static final int listeningPort = 80;
 
     public void Shared() {
-
+        accepting = false;
+        generalShutdown = false;
     }
 
     public boolean isAccepting() {

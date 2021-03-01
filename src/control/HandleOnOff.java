@@ -1,5 +1,6 @@
 package control;
 
+import control.accept.HandleAccept;
 import control.memory.Shared;
 
 import java.io.BufferedReader;
@@ -19,11 +20,18 @@ public class HandleOnOff implements Runnable{
         currentState = false;
         generalShutdown = false;
         inTastiera = new BufferedReader(new InputStreamReader(System.in));
+        shared = new Shared();
     }
 
     @Override
     public void run() {
         try {
+            //Start del thread che permette la gestione delle richieste
+            new Thread(new HandleAccept(shared)).start();
+
+            normalLog("Per mandare online/offline il server: online/offline \n" +
+                      "Per spegnere il server: stop \n" +
+                      "Per stampare informazioni su i comandi: help");
             do{
                 log("Stato server: ");
                 if(currentState) {
@@ -31,8 +39,6 @@ public class HandleOnOff implements Runnable{
                 } else {
                     log("offline\n");
                 }
-                normalLog("Per mandare online/offline il server: online/offline\n" +
-                        "Per spegnere il server: stop");
                 switch(inTastiera.readLine()) {
                     case "online": {
                         if(currentState) {
@@ -57,6 +63,17 @@ public class HandleOnOff implements Runnable{
                     case "stop": {
                         normalLog("Chiusura server, il programma terminerà a breve");
                         generalShutdown = true;
+                    }
+                    case "help": {
+                        normalLog("Per mandare online/offline il server: online/offline \n" +
+                                "Per spegnere il server: stop \n" +
+                                "Per stampare informazioni su i comandi: help");
+                    }
+                    default: {
+                        log("Comando non trovato\n");
+                        normalLog("Per mandare online/offline il server: online/offline \n" +
+                                "Per spegnere il server: stop \n" +
+                                "Per stampare informazioni su i comandi: help");
                     }
                 }
             } while(!generalShutdown);
