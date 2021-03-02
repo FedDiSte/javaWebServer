@@ -31,6 +31,7 @@ public class HandleOnOff implements Runnable{
 
             normalLog("Per mandare online/offline il server: online/offline \n" +
                       "Per spegnere il server: stop \n" +
+                      "Per aggiungere una rotta: route\n" +
                       "Per stampare informazioni su i comandi: help");
             do{
                 log("Stato server: ");
@@ -64,6 +65,12 @@ public class HandleOnOff implements Runnable{
                         normalLog("Chiusura server, il programma terminerà a breve");
                         generalShutdown = true;
                         break;
+                    }
+                    case "route": {
+                        log("Inserire il percorso");
+                        String percorso = inTastiera.readLine();
+                        log("Inserire la rotta associata");
+                        String richesta = inTastiera.readLine();
                     }
                     case "help": {
                         normalLog("Per mandare online/offline il server: online/offline \n" +
