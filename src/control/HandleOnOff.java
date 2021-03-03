@@ -70,7 +70,8 @@ public class HandleOnOff implements Runnable{
                         log("Inserire il percorso");
                         String percorso = inTastiera.readLine();
                         log("Inserire la rotta associata");
-                        String richesta = inTastiera.readLine();
+                        String richiesta = inTastiera.readLine();
+                        shared.addRoute(percorso, richiesta);
                     }
                     case "help": {
                         normalLog("Per mandare online/offline il server: online/offline \n" +

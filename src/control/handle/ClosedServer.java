@@ -18,10 +18,10 @@ public class ClosedServer implements Runnable {
     BufferedReader inNet;
 
     private PrintWriter outNet;
-    private String percorso = "src/res/403.html";
+    private String percorso = "src/res/html/403.html";
     private Path pathFile = Paths.get(percorso);
 
-    private String css = "src/res/grafica.css";
+    private String css = "src/res/css/grafica.css";
     private Path pathToCss = Paths.get(css);
 
     String pathImg = "src/res/images/img.png";

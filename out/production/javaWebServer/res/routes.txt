@@ -1,0 +1,2 @@
+src/res/html/index.html /
+src/res/css/grafica.css /grafica.css

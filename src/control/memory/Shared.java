@@ -3,9 +3,7 @@ package control.memory;
 import model.Route;
 
 import java.io.*;
-import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -19,7 +17,7 @@ public class Shared {
 
     private ArrayList<Route> routes;
 
-    public void Shared() {
+    public Shared() {
         routes = new ArrayList<>();
         accepting = false;
         generalShutdown = false;
