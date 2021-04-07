@@ -3,6 +3,7 @@ package control.memory;
 import model.Route;
 
 import java.io.*;
+import java.net.ServerSocket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -18,10 +19,10 @@ public class Shared {
     private ArrayList<Route> routes;
 
     public Shared() {
-        routes = new ArrayList<>();
-        accepting = false;
-        generalShutdown = false;
-        loadRoutes();
+            routes = new ArrayList<>();
+            accepting = false;
+            generalShutdown = false;
+            loadRoutes();
     }
 
     public String getRoutes() {

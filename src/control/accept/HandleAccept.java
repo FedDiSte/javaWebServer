@@ -30,7 +30,7 @@ public class HandleAccept implements Runnable{
                 if(shared.isAccepting()) {
                     new Thread(new OpenServer(serverSocket.accept(), shared)).start();
                 } else {
-                    new Thread(new ClosedServer(serverSocket.accept())).start();
+                    new Thread(new ClosedServer(serverSocket.accept(), shared)).start();
                 }
             } while(!shared.isGeneralShutdown());
             serverSocket.close();

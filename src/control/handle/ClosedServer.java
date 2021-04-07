@@ -2,9 +2,12 @@ package control.handle;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import control.memory.Shared;
 
 import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
@@ -17,7 +20,7 @@ public class ClosedServer implements Runnable {
 
     BufferedReader inNet;
 
-    private PrintWriter outNet;
+    private BufferedOutputStream outNet;
     private String percorso = "src/res/html/403.html";
     private Path pathFile = Paths.get(percorso);
 
@@ -27,12 +30,14 @@ public class ClosedServer implements Runnable {
     String pathImg = "src/res/images/img.png";
     Path percorsoImg = Paths.get(pathImg);
 
+    Shared shared;
 
-    public ClosedServer(Socket socket) {
+    public ClosedServer(Socket socket, Shared shared) {
         try {
+            this.shared = shared;
             this.socket = socket;
             inNet = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            outNet = new PrintWriter(socket.getOutputStream(), true);
+            outNet = new BufferedOutputStream(socket.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -51,6 +56,7 @@ public class ClosedServer implements Runnable {
                 } else if(readed.contains(".css")) {
                     sendCss();
                 } else {
+                    log("here");
                     sendHtml();
                 }
             }
@@ -73,7 +79,6 @@ public class ClosedServer implements Runnable {
     }
 
     public void sendCss() throws IOException{
-
         String toAppend;
         BufferedReader fileCss = new BufferedReader(new FileReader(pathToCss.toFile()));
         send("HTTP/1.1 200 OK");
@@ -89,21 +94,19 @@ public class ClosedServer implements Runnable {
 
     public void sendImg() {
         try {
-            BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
             BufferedInputStream in = new BufferedInputStream(new FileInputStream(percorsoImg.toFile()));
 
             send("HTTP/1.1 200 OK");
             send("Content-Type: image/png");
-            send("Content-Length: " + percorsoImg.toFile().length());
+            send("Content-Length: " + Files.size(percorsoImg));
             send("\r\n");
 
             byte[] buffer = new byte[4096];
             int bytesRead;
             while ((bytesRead = in.read(buffer)) != -1) {
-                out.write(buffer, 0, bytesRead);
+                outNet.write(buffer, 0, bytesRead);
             }
-            out.flush();
-            out.close();
+            outNet.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -114,8 +117,12 @@ public class ClosedServer implements Runnable {
     }
 
     private void send(String message) {
-        outNet.println(message);
-        outNet.flush();
+        try {
+            outNet.write(message.getBytes());
+            outNet.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private String getRequest() throws IOException{
